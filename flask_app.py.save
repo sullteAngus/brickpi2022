@@ -1,0 +1,45 @@
+
+from __future__ import unicode_literals
+from flask import Flask, render_template, session, request, redirect, flash, url_for, jsonify, Response, logging
+from interfaces import databaseinterface, camerainterface, soundinterface
+import robot #robot is class that extends the brickpi class
+import global_vars as GLOBALS #load global variables
+import logging, time
+
+#Creates the Flask Server Object
+app = Flask(__name__); app.debug = True
+SECRET_KEY = 'my random key can be anything' #this is used for encrypting sessions
+app.config.from_object(__name__) #Set app configuration using above SETTINGS
+logging.basicConfig(filename='logs/flask.log', level=logging.INFO)
+GLOBALS.DATABASE = databaseinterface.DatabaseInterface('databases/RobotDatabase.db', app.logger)
+
+#Log messages
+def log(message):
+    app.logger.info(message)
+    return
+
+#create a login page
+@app.route('/', methods=['GET','POST'])
+def login():
+    if 'userid' in session:
+        return redirect('/dashboard')
+    message = ""
+    if request.method == "POST":
+        email = request.form.get("email")
+        userdetails = GLOBALS.DATABASE.ViewQuery("SELECT * FROM users WHERE email = ?", (email,))
+        log(userdetails)
+        if userdetails:
+            user = userdetails[0] #get first row in results
+            if user['password'] == request.form.get("password"):
+                session['userid'] = user['userid']
+                session['permission'] = user['permission']
+                session['name'] = user['name']
+                return redirect('/dashboard')
+            else:
+                message = "Login Unsuccessful"
+        else:
+            message = "Login Unsuccessful"
+    return render_template('login.html', data = message)    
+
+# Load the ROBOT
+@app.route('/robotload', methods=['GET','POST'])

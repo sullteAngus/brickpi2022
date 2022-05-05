@@ -601,11 +601,12 @@ class BrickPiInterface():
 # Only execute if this is the main file, good for testing code
 if __name__ == '__main__':
     logging.basicConfig(filename='logs/robot.log', level=logging.INFO)
-    ROBOT = BrickPiInterface(timelimit=10)  #20 second timelimit before
-    bp = ROBOT.BP; bp.reset_all(); time.sleep(2) #this will halt previou program is still running
+    ROBOT = BrickPiInterface(timelimit=0)  #20 second timelimit before
+    bp = ROBOT.BP; bp.reset_all(); time.sleep(1) #this will halt previou program is still running
     ROBOT.configure_sensors() #This takes 4 seconds
     input("Press enter to start: ")
     ROBOT.spin_medium_motor(300)
-    ROBOT.rotate_power_degrees_IMU(17,90)
+    ROBOT.rotate_power_degrees_IMU(20,-90)
+    #ROBOT.move_power_time(50,4)
     print(ROBOT.get_all_sensors())
     ROBOT.safe_exit()

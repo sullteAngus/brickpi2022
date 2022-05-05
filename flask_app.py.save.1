@@ -102,7 +102,7 @@ def sensors():
 @app.route('/forward', methods=['GET','POST'])
 def     forward():
     if GLOBALS.ROBOT:
-        data = GLOBALS.ROBOT.move_power(25)
+        data = GLOBALS.ROBOT.move_power(50)
 
 @app.route('/turnleft', methods=['GET','POST'])
 def turnleft():
@@ -134,7 +134,6 @@ def mission():
         notes = request.form.get('notes')
         location = request.form.get('location')
     return(jsonify({}))
-
     
     return render_template('mission.html',data=data)
 @app.route('/sensorview', methods=['GET','POST'])
